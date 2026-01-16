@@ -409,5 +409,31 @@ namespace JimmysUnityUtilities
         /// </summary>
         public static HashSet<T> ToHashSet<T>(this IEnumerable<T> source)
             => new HashSet<T>(source);
+
+        #region Min/Max
+        public static (T item, V value) MinV<T, V>(this IEnumerable<T> source, Func<T,V> key) where V : IComparable<V>
+        {
+            return source.Select<T, (T item, V value)>(i => (i, key(i)))
+                .Aggregate((v1, v2) => v2.value.CompareTo(v1.value) < 0 ? v2 : v1);
+        }
+
+        public static (T item, V value) MinV<T, V>(this IEnumerable<T> source, (T item, V value) seed, Func<T,V> key) where V : IComparable<V>
+        {
+            return source.Select<T, (T item, V value)>(i => (i, key(i)))
+                .Aggregate(seed, (v1, v2) => v2.value.CompareTo(v1.value) < 0 ? v2 : v1);
+        }
+
+        public static (T item, V value) MaxV<T, V>(this IEnumerable<T> source, Func<T,V> key) where V : IComparable<V>
+        {
+            return source.Select<T, (T item, V value)>(i => (i, key(i)))
+                .Aggregate((v1, v2) => v2.value.CompareTo(v1.value) > 0 ? v2 : v1);
+        }
+
+        public static (T item, V value) MaxV<T, V>(this IEnumerable<T> source, (T item, V value) seed, Func<T,V> key) where V : IComparable<V>
+        {
+            return source.Select<T, (T item, V value)>(i => (i, key(i)))
+                .Aggregate(seed, (v1, v2) => v2.value.CompareTo(v1.value) > 0 ? v2 : v1);
+        }
+        #endregion Min/Max
     }
 }
